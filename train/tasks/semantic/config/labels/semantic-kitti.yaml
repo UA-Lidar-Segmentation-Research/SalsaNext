@@ -1,8 +1,8 @@
 # This file is covered by the LICENSE file in the root of this project.
 name: "kitti"
 labels:
-  0: "unlabeled"
-  1: "outlier"
+  0 : "unlabeled"
+  1 : "outlier"
   10: "car"
   11: "bicycle"
   13: "bus"
@@ -36,8 +36,8 @@ labels:
   258: "moving-truck"
   259: "moving-other-vehicle"
 color_map: # bgr
-  0: [0, 0, 0]
-  1: [0, 0, 255]
+  0 : [0, 0, 0]
+  1 : [0, 0, 255]
   10: [245, 150, 100]
   11: [245, 230, 100]
   13: [250, 80, 100]
@@ -108,8 +108,8 @@ content: # as a ratio with the total number of points
 # classes that are indistinguishable from single scan or inconsistent in
 # ground truth are mapped to their closest equivalent
 learning_map:
-  0: 0     # "unlabeled"
-  1: 0     # "outlier" mapped to "unlabeled" --------------------------mapped
+  0 : 0     # "unlabeled"
+  1 : 0     # "outlier" mapped to "unlabeled" --------------------------mapped
   10: 1     # "car"
   11: 2     # "bicycle"
   13: 5     # "bus" mapped to "other-vehicle" --------------------------mapped
@@ -186,27 +186,15 @@ learning_ignore: # Ignore classes
   19: False    # "traffic-sign"
 split: # sequence numbers
   train:
-    - 0
-    - 1
-    - 2
-    - 3
-    - 4
-    - 5
-    - 6
-    - 7
-    - 9
     - 10
-  valid:
-    - 8
-  test:
-    - 11
     - 12
     - 13
-    - 14
-    - 15
-    - 16
-    - 17
     - 18
     - 19
+  valid:
     - 20
-    - 21
+    - 25
+  test:
+    - 30
+    - 32
+    - 35
