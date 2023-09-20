@@ -47,11 +47,11 @@ class SoftmaxHeteroscedasticLoss(torch.nn.Module):
         return torch.mean(0.5 * precision * (targets - mean) ** 2 + 0.5 * torch.log(var + eps))
 
 
-def save_to_log(logdir, logfile, message):
-    f = open(logdir + '/' + logfile, "a")
-    f.write(message + '\n')
-    f.close()
-    return
+# def save_to_log(logdir, logfile, message):
+#     f = open(logdir + '/' + logfile, "a")
+#     f.write(message + '\n')
+#     f.close()
+#     return
 
 
 def save_checkpoint(to_save, logdir, suffix=""):
@@ -221,28 +221,28 @@ class Trainer():
         out_img = np.concatenate([out_img, gt_color], axis=0)
         return (out_img).astype(np.uint8)
 
-    @staticmethod
-    def save_to_log(logdir, logger, info, epoch, w_summary=False, model=None, img_summary=False, imgs=[]):
-        # save scalars
-        for tag, value in info.items():
-            logger.scalar_summary(tag, value, epoch)
-
-        # save summaries of weights and biases
-        if w_summary and model:
-            for tag, value in model.named_parameters():
-                tag = tag.replace('.', '/')
-                logger.histo_summary(tag, value.data.cpu().numpy(), epoch)
-                if value.grad is not None:
-                    logger.histo_summary(
-                        tag + '/grad', value.grad.data.cpu().numpy(), epoch)
-
-        if img_summary and len(imgs) > 0:
-            directory = os.path.join(logdir, "predictions")
-            if not os.path.isdir(directory):
-                os.makedirs(directory)
-            for i, img in enumerate(imgs):
-                name = os.path.join(directory, str(i) + ".png")
-                cv2.imwrite(name, img)
+    # @staticmethod
+    # def save_to_log(logdir, logger, info, epoch, w_summary=False, model=None, img_summary=False, imgs=[]):
+    #     # save scalars
+    #     for tag, value in info.items():
+    #         logger.scalar_summary(tag, value, epoch)
+    #
+    #     # save summaries of weights and biases
+    #     if w_summary and model:
+    #         for tag, value in model.named_parameters():
+    #             tag = tag.replace('.', '/')
+    #             logger.histo_summary(tag, value.data.cpu().numpy(), epoch)
+    #             if value.grad is not None:
+    #                 logger.histo_summary(
+    #                     tag + '/grad', value.grad.data.cpu().numpy(), epoch)
+    #
+    #     if img_summary and len(imgs) > 0:
+    #         directory = os.path.join(logdir, "predictions")
+    #         if not os.path.isdir(directory):
+    #             os.makedirs(directory)
+    #         for i, img in enumerate(imgs):
+    #             name = os.path.join(directory, str(i) + ".png")
+    #             cv2.imwrite(name, img)
 
     def train(self):
 
@@ -328,14 +328,14 @@ class Trainer():
             print("*" * 80)
 
             # save to log
-            Trainer.save_to_log(logdir=self.log,
-                                logger=self.tb_logger,
-                                info=self.info,
-                                epoch=epoch,
-                                w_summary=self.ARCH["train"]["save_summary"],
-                                model=self.model_single,
-                                img_summary=self.ARCH["train"]["save_scans"],
-                                imgs=rand_img)
+            # Trainer.save_to_log(logdir=self.log,
+            #                     logger=self.tb_logger,
+            #                     info=self.info,
+            #                     epoch=epoch,
+            #                     w_summary=self.ARCH["train"]["save_summary"],
+            #                     model=self.model_single,
+            #                     img_summary=self.ARCH["train"]["save_scans"],
+            #                     imgs=rand_img)
 
         print('Finished Training')
 
@@ -453,18 +453,18 @@ class Trainer():
                         data_time=self.data_time_t, loss=losses, hetero_l=hetero_l,acc=acc, iou=iou, lr=lr,
                         umean=update_mean, ustd=update_std, estim=self.calculate_estimate(epoch, i)))
 
-                    save_to_log(self.log, 'log.txt', 'Lr: {lr:.3e} | '
-                          'Update: {umean:.3e} mean,{ustd:.3e} std | '
-                          'Epoch: [{0}][{1}/{2}] | '
-                          'Time {batch_time.val:.3f} ({batch_time.avg:.3f}) | '
-                          'Data {data_time.val:.3f} ({data_time.avg:.3f}) | '
-                          'Loss {loss.val:.4f} ({loss.avg:.4f}) | '
-                          'Hetero {hetero.val:.4f} ({hetero.avg:.4f}) | '
-                          'acc {acc.val:.3f} ({acc.avg:.3f}) | '
-                          'IoU {iou.val:.3f} ({iou.avg:.3f}) | [{estim}]'.format(
-                        epoch, i, len(train_loader), batch_time=self.batch_time_t,
-                        data_time=self.data_time_t, loss=losses, hetero=hetero_l,acc=acc, iou=iou, lr=lr,
-                        umean=update_mean, ustd=update_std, estim=self.calculate_estimate(epoch, i)))
+                    # save_to_log(self.log, 'log.txt', 'Lr: {lr:.3e} | '
+                    #       'Update: {umean:.3e} mean,{ustd:.3e} std | '
+                    #       'Epoch: [{0}][{1}/{2}] | '
+                    #       'Time {batch_time.val:.3f} ({batch_time.avg:.3f}) | '
+                    #       'Data {data_time.val:.3f} ({data_time.avg:.3f}) | '
+                    #       'Loss {loss.val:.4f} ({loss.avg:.4f}) | '
+                    #       'Hetero {hetero.val:.4f} ({hetero.avg:.4f}) | '
+                    #       'acc {acc.val:.3f} ({acc.avg:.3f}) | '
+                    #       'IoU {iou.val:.3f} ({iou.avg:.3f}) | [{estim}]'.format(
+                    #     epoch, i, len(train_loader), batch_time=self.batch_time_t,
+                    #     data_time=self.data_time_t, loss=losses, hetero=hetero_l,acc=acc, iou=iou, lr=lr,
+                    #     umean=update_mean, ustd=update_std, estim=self.calculate_estimate(epoch, i)))
             else:
                 if i % self.ARCH["train"]["report_batch"] == 0:
                     print('Lr: {lr:.3e} | '
@@ -479,17 +479,17 @@ class Trainer():
                         data_time=self.data_time_t, loss=losses, acc=acc, iou=iou, lr=lr,
                         umean=update_mean, ustd=update_std, estim=self.calculate_estimate(epoch, i)))
 
-                    save_to_log(self.log, 'log.txt', 'Lr: {lr:.3e} | '
-                                                     'Update: {umean:.3e} mean,{ustd:.3e} std | '
-                                                     'Epoch: [{0}][{1}/{2}] | '
-                                                     'Time {batch_time.val:.3f} ({batch_time.avg:.3f}) | '
-                                                     'Data {data_time.val:.3f} ({data_time.avg:.3f}) | '
-                                                     'Loss {loss.val:.4f} ({loss.avg:.4f}) | '
-                                                     'acc {acc.val:.3f} ({acc.avg:.3f}) | '
-                                                     'IoU {iou.val:.3f} ({iou.avg:.3f}) | [{estim}]'.format(
-                        epoch, i, len(train_loader), batch_time=self.batch_time_t,
-                        data_time=self.data_time_t, loss=losses, acc=acc, iou=iou, lr=lr,
-                        umean=update_mean, ustd=update_std, estim=self.calculate_estimate(epoch, i)))
+                    # save_to_log(self.log, 'log.txt', 'Lr: {lr:.3e} | '
+                    #                                  'Update: {umean:.3e} mean,{ustd:.3e} std | '
+                    #                                  'Epoch: [{0}][{1}/{2}] | '
+                    #                                  'Time {batch_time.val:.3f} ({batch_time.avg:.3f}) | '
+                    #                                  'Data {data_time.val:.3f} ({data_time.avg:.3f}) | '
+                    #                                  'Loss {loss.val:.4f} ({loss.avg:.4f}) | '
+                    #                                  'acc {acc.val:.3f} ({acc.avg:.3f}) | '
+                    #                                  'IoU {iou.val:.3f} ({iou.avg:.3f}) | [{estim}]'.format(
+                    #     epoch, i, len(train_loader), batch_time=self.batch_time_t,
+                    #     data_time=self.data_time_t, loss=losses, acc=acc, iou=iou, lr=lr,
+                    #     umean=update_mean, ustd=update_std, estim=self.calculate_estimate(epoch, i)))
 
             # step scheduler
             scheduler.step()
@@ -587,25 +587,25 @@ class Trainer():
                                                      hetero=hetero_l,
                                                      acc=acc, iou=iou))
 
-                save_to_log(self.log, 'log.txt', 'Validation set:\n'
-                      'Time avg per batch {batch_time.avg:.3f}\n'
-                      'Loss avg {loss.avg:.4f}\n'
-                      'Jaccard avg {jac.avg:.4f}\n'
-                      'WCE avg {wces.avg:.4f}\n'
-                      'Hetero avg {hetero.avg}:.4f\n'
-                      'Acc avg {acc.avg:.3f}\n'
-                      'IoU avg {iou.avg:.3f}'.format(batch_time=self.batch_time_e,
-                                                     loss=losses,
-                                                     jac=jaccs,
-                                                     wces=wces,
-                                                     hetero=hetero_l,
-                                                     acc=acc, iou=iou))
+                # save_to_log(self.log, 'log.txt', 'Validation set:\n'
+                #       'Time avg per batch {batch_time.avg:.3f}\n'
+                #       'Loss avg {loss.avg:.4f}\n'
+                #       'Jaccard avg {jac.avg:.4f}\n'
+                #       'WCE avg {wces.avg:.4f}\n'
+                #       'Hetero avg {hetero.avg}:.4f\n'
+                #       'Acc avg {acc.avg:.3f}\n'
+                #       'IoU avg {iou.avg:.3f}'.format(batch_time=self.batch_time_e,
+                #                                      loss=losses,
+                #                                      jac=jaccs,
+                #                                      wces=wces,
+                #                                      hetero=hetero_l,
+                #                                      acc=acc, iou=iou))
                 # print also classwise
                 for i, jacc in enumerate(class_jaccard):
                     print('IoU class {i:} [{class_str:}] = {jacc:.3f}'.format(
                         i=i, class_str=class_func(i), jacc=jacc))
-                    save_to_log(self.log, 'log.txt', 'IoU class {i:} [{class_str:}] = {jacc:.3f}'.format(
-                        i=i, class_str=class_func(i), jacc=jacc))
+                    # save_to_log(self.log, 'log.txt', 'IoU class {i:} [{class_str:}] = {jacc:.3f}'.format(
+                    #     i=i, class_str=class_func(i), jacc=jacc))
                     self.info["valid_classes/"+class_func(i)] = jacc
             else:
 
@@ -621,23 +621,23 @@ class Trainer():
                                                      wces=wces,
                                                      acc=acc, iou=iou))
 
-                save_to_log(self.log, 'log.txt', 'Validation set:\n'
-                                                 'Time avg per batch {batch_time.avg:.3f}\n'
-                                                 'Loss avg {loss.avg:.4f}\n'
-                                                 'Jaccard avg {jac.avg:.4f}\n'
-                                                 'WCE avg {wces.avg:.4f}\n'
-                                                 'Acc avg {acc.avg:.3f}\n'
-                                                 'IoU avg {iou.avg:.3f}'.format(batch_time=self.batch_time_e,
-                                                                                loss=losses,
-                                                                                jac=jaccs,
-                                                                                wces=wces,
-                                                                                acc=acc, iou=iou))
+                # save_to_log(self.log, 'log.txt', 'Validation set:\n'
+                #                                  'Time avg per batch {batch_time.avg:.3f}\n'
+                #                                  'Loss avg {loss.avg:.4f}\n'
+                #                                  'Jaccard avg {jac.avg:.4f}\n'
+                #                                  'WCE avg {wces.avg:.4f}\n'
+                #                                  'Acc avg {acc.avg:.3f}\n'
+                #                                  'IoU avg {iou.avg:.3f}'.format(batch_time=self.batch_time_e,
+                #                                                                 loss=losses,
+                #                                                                 jac=jaccs,
+                #                                                                 wces=wces,
+                #                                                                 acc=acc, iou=iou))
                 # print also classwise
                 for i, jacc in enumerate(class_jaccard):
                     print('IoU class {i:} [{class_str:}] = {jacc:.3f}'.format(
                         i=i, class_str=class_func(i), jacc=jacc))
-                    save_to_log(self.log, 'log.txt', 'IoU class {i:} [{class_str:}] = {jacc:.3f}'.format(
-                        i=i, class_str=class_func(i), jacc=jacc))
+                    # save_to_log(self.log, 'log.txt', 'IoU class {i:} [{class_str:}] = {jacc:.3f}'.format(
+                    #     i=i, class_str=class_func(i), jacc=jacc))
                     self.info["valid_classes/" + class_func(i)] = jacc
 
 
