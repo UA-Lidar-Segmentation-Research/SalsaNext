@@ -25,7 +25,7 @@ do
 done
 
 c=0
-a=salsanext.yml
+a=salsanext_rellis.yml
 l=logs
 d="/dataset"
 if [ -z "$a" ] || [ -z "$d" ] || [ -z "$l" ]
